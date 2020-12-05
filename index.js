@@ -4,6 +4,7 @@ const fs = require("fs");
 const { promisify } = require("util");
 
 const open = promisify(fs.open);
+const read = promisify(fs.readFile);
 
 async function askForURL() {
   try {
@@ -26,6 +27,33 @@ async function askForURL() {
   }
 }
 
+async function printData(path) {
+  let data = await read(path, "utf8");
+
+  data = JSON.parse(data);
+
+  const { audits } = data;
+
+  const allowed = [
+    "first-contentful-paint",
+    "largest-contentful-paint",
+    "interactive",
+  ];
+
+  const filtered = Object.keys(audits)
+    .filter((key) => allowed.includes(key))
+    .reduce((obj, key) => {
+      return {
+        ...obj,
+        [key]: audits[key],
+      };
+    }, {});
+  const FCP = audits["first-contentful-paint"];
+  const LCP = audits["largest-contentful-paint"];
+
+  return filtered;
+}
+
 function runLighthouse(url) {
   const path = "--output-path run.json";
   const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless" `;
@@ -36,4 +64,5 @@ function runLighthouse(url) {
     await open("run.report.html", "r");
   });
 }
-askForURL().then((url) => runLighthouse(url));
+// askForURL().then((url) => runLighthouse(url));
+printData("run.report.json").then((data) => console.log(data));
