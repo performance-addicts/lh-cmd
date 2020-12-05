@@ -27,7 +27,7 @@ async function askForURL() {
   }
 }
 
-async function printData(path) {
+async function gatherMetrics(path) {
   let data = await read(path, "utf8");
 
   data = JSON.parse(data);
@@ -35,8 +35,12 @@ async function printData(path) {
   const { audits } = data;
 
   const allowed = [
+    "first-meaningful-paint",
     "first-contentful-paint",
     "largest-contentful-paint",
+    "speed-index",
+    "total-blocking-time",
+    "cumulative-layout-shift",
     "interactive",
   ];
 
@@ -65,4 +69,14 @@ function runLighthouse(url) {
   });
 }
 // askForURL().then((url) => runLighthouse(url));
-printData("run.report.json").then((data) => console.log(data));
+gatherMetrics("run.report.json").then((data) => {
+  const table = Object.entries(data).map(([key, value]) => {
+    const newMetric = {
+      [key]: value.displayValue,
+    };
+
+    return newMetric;
+  });
+
+  console.log(table);
+});
