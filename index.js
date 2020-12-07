@@ -3,11 +3,13 @@ const inquirer = require("inquirer");
 const open = require("open");
 const fs = require("fs");
 const { promisify } = require("util");
-const { gatherMetrics } = require("./helpers/functions");
+const { gatherMetrics, convertURL } = require("./helpers/functions");
+const Page = require("./helpers/Page");
 const pageList = require("./helpers/page-list");
 
 const read = promisify(fs.readFile);
-const urlList = pageList.map(({ url }) => url);
+const urlList = [...pageList.map(({ url }) => url), "Or enter URL"];
+
 let currentFile = "";
 
 async function askForURL() {
@@ -21,6 +23,29 @@ async function askForURL() {
       },
     ]);
 
+    if (url === "Or enter URL") {
+      const { url, filename } = await inquirer.prompt([
+        {
+          name: "url",
+          type: "input",
+          message: "Enter a url",
+          validate: (value) => {
+            return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(
+              value
+            );
+          },
+        },
+        {
+          name: "filename",
+          type: "input",
+          message:
+            "Enter a filename (all lowercase with dashes) ex: outlet-pdp",
+        },
+      ]);
+
+      return new Page("Entered URL", filename, url);
+    }
+
     return pageList.find((page) => page.url === url);
   } catch (err) {
     console.log(err);
@@ -33,25 +58,23 @@ function runLighthouse(obj) {
   const path = `--output-path ${filename}.json`;
   const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless" `;
   console.log("working...");
+  // run lh cmd
   cmd.get(command, async (err, data, stderr) => {
     if (err) throw err;
     console.log(data);
     console.log("done");
-    gatherMetrics(`${currentFile}.json`).then(async (data) => {
-      const table = Object.entries(data).map(([key, value]) => {
-        const newMetric = {
-          [key]: value.displayValue,
-        };
 
-        return newMetric;
-      });
+    const metrics = await gatherMetrics(`${currentFile}.json`);
 
-      console.log(table);
-      await open(`${currentFile}.html`);
+    const table = Object.entries(metrics).map(([key, value]) => {
+      return [key, value.displayValue];
     });
+    console.table(table);
+    await open(`${currentFile}.html`);
   });
 }
 
-askForURL().then((data) => {
-  runLighthouse(data);
-});
+(async () => {
+  const input = await askForURL();
+  runLighthouse(input);
+})();

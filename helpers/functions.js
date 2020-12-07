@@ -31,4 +31,18 @@ async function gatherMetrics(path) {
   return filtered;
 }
 
-module.exports = { gatherMetrics };
+function convertURL(url, swapOne, swapTwo) {
+  url = url.split("");
+
+  return url
+    .map((char) => {
+      if (char === swapOne) {
+        char = swapTwo;
+      }
+
+      return char;
+    })
+    .join("");
+}
+
+module.exports = { gatherMetrics, convertURL };
