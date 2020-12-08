@@ -2,6 +2,10 @@
 
 ## Clone repo and npm install
 
+### Have Lighthouse installed
+
+It is not a listed dependency in this project - install globally first `npm install -g lighthouse`
+
 ### Steps
 
 1. npm start
