@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/tapestry-performance/lh-cmd#readme",
   "dependencies": {
+    "date-and-time": "^0.14.1",
     "inquirer": "^7.3.3",
     "node-cmd": "^4.0.0",
     "open": "^7.3.0"
