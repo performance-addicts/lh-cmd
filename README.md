@@ -24,10 +24,8 @@ The Lighthouse report will automatically open in your default browser.
 2 files will be saved based on the filename you provided or present in the page list.
 
 ```
-[filename].report.json
-[filename].report.html
+[filename]-MM-DD-YYYY-HH-mm-ss.report.json
+[filename]-MM-DD-YYYY-HH-mm-ss.report.html
 ```
 
 ![Files](./images/files.png "Files")
-
-These will be overwritten on subsequent runs, so if you need to back up past reports rename them before running again.
