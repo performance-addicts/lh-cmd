@@ -1,5 +1,6 @@
 const cmd = require("node-cmd");
 const inquirer = require("inquirer");
+const date = require("date-and-time");
 const open = require("open");
 const fs = require("fs");
 const { promisify } = require("util");
@@ -53,9 +54,10 @@ async function askForURL() {
 }
 
 function runLighthouse(obj) {
+  const now = date.format(new Date(), "MM-DD-YYYY-HH-mm-ss");
   const { url, filename } = obj;
-  currentFile = `${filename}.report`;
-  const path = `--output-path ${filename}.json`;
+  currentFile = `${filename}-${now}.report`;
+  const path = `--output-path ${filename}-${now}.json`;
   const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless" `;
   console.log("working...");
   // run lh cmd
