@@ -1,4 +1,5 @@
 const fs = require("fs");
+const cmd = require("node-cmd");
 const { promisify } = require("util");
 const read = promisify(fs.readFile);
 
@@ -45,4 +46,13 @@ function convertURL(url, swapOne, swapTwo) {
     .join("");
 }
 
-module.exports = { gatherMetrics, convertURL };
+function runCMD(command) {
+  return new Promise((resolve, reject) => {
+    cmd.get(command, (err, data, stderr) => {
+      if (err) reject(err);
+      else resolve(data);
+    });
+  });
+}
+
+module.exports = { gatherMetrics, convertURL, runCMD };

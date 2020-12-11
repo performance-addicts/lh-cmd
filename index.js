@@ -1,10 +1,9 @@
-const cmd = require("node-cmd");
 const inquirer = require("inquirer");
 const date = require("date-and-time");
 const open = require("open");
 const fs = require("fs");
 const { promisify } = require("util");
-const { gatherMetrics, convertURL } = require("./helpers/functions");
+const { gatherMetrics, runCMD, convertURL } = require("./helpers/functions");
 const Page = require("./helpers/Page");
 const pageList = require("./helpers/page-list");
 
@@ -53,7 +52,7 @@ async function askForURL() {
   }
 }
 
-function runLighthouse(obj) {
+async function runLighthouse(obj) {
   const now = date.format(new Date(), "MM-DD-YYYY-HH-mm-ss");
   const { url, filename } = obj;
   currentFile = `${filename}-${now}.report`;
@@ -61,22 +60,19 @@ function runLighthouse(obj) {
   const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless" `;
   console.log("working...");
   // run lh cmd
-  cmd.get(command, async (err, data, stderr) => {
-    if (err) throw err;
-    console.log(data);
-    console.log("done");
+  await runCMD(command);
+  console.log("done");
 
-    const metrics = await gatherMetrics(`${currentFile}.json`);
+  const metrics = await gatherMetrics(`${currentFile}.json`);
 
-    const table = Object.entries(metrics).map(([key, value]) => {
-      return [key, value.displayValue];
-    });
-    console.table(table);
-    await open(`${currentFile}.html`);
+  const table = Object.entries(metrics).map(([key, value]) => {
+    return [key, value.displayValue];
   });
+  console.table(table);
+  await open(`${currentFile}.html`);
 }
 
 (async () => {
   const input = await askForURL();
-  runLighthouse(input);
+  await runLighthouse(input);
 })();
