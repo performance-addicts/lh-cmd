@@ -1,10 +1,12 @@
 const inquirer = require("inquirer");
 const date = require("date-and-time");
 const open = require("open");
+require("dotenv").config();
 const fs = require("fs");
 const { promisify } = require("util");
 const { gatherMetrics, runCMD, convertURL } = require("./helpers/functions");
 const Page = require("./helpers/Page");
+const { fetchSheet } = require("./sheets");
 const pageList = require("./helpers/page-list");
 
 const read = promisify(fs.readFile);
@@ -12,14 +14,14 @@ const urlList = [...pageList.map(({ url }) => url), "Or enter URL"];
 
 let currentFile = "";
 
-async function askForURL() {
+async function askForURL(arr) {
   try {
     const { url } = await inquirer.prompt([
       {
         name: "url",
         type: "list",
         message: "Select a url",
-        choices: urlList,
+        choices: [...arr.map(({ url }) => url), "Or enter URL"],
       },
     ]);
 
@@ -46,7 +48,7 @@ async function askForURL() {
       return new Page("Entered URL", filename, url);
     }
 
-    return pageList.find((page) => page.url === url);
+    return arr.find((page) => page.url === url);
   } catch (err) {
     console.log(err);
   }
@@ -73,6 +75,15 @@ async function runLighthouse(obj) {
 }
 
 (async () => {
-  const input = await askForURL();
+  const urls = await fetchSheet();
+
+  let pages = urls.map((url) => {
+    const page = new Page("temp", "temp", url);
+    page.createFilename();
+    console.log(page);
+    return page;
+  });
+
+  const input = await askForURL(pages);
   await runLighthouse(input);
 })();

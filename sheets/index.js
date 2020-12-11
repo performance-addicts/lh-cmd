@@ -13,7 +13,6 @@ async function fetchSheet() {
 
   await doc.loadInfo(); // loads document properties and worksheets
   console.log(doc.title);
-  await doc.updateProperties({ title: "renamed" });
 
   const sheet = doc.sheetsByIndex[0]; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
 
@@ -32,6 +31,4 @@ async function fetchSheet() {
   return cells;
 }
 
-(async () => {
-  fetchSheet();
-})();
+module.exports = { fetchSheet };
