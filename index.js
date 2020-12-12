@@ -1,10 +1,11 @@
+const fs = require("fs");
+const { promisify } = require("util");
 const inquirer = require("inquirer");
 const date = require("date-and-time");
 const open = require("open");
 require("dotenv").config();
-const fs = require("fs");
-const { promisify } = require("util");
 const { gatherMetrics, runCMD, convertURL } = require("./helpers/functions");
+const { inputPrompt } = require("./helpers/prompts");
 const Page = require("./helpers/Page");
 const { fetchSheet } = require("./sheets");
 const pageList = require("./helpers/page-list");
@@ -26,26 +27,16 @@ async function askForURL(arr) {
     ]);
 
     if (url === "Or enter URL") {
-      const { url, filename } = await inquirer.prompt([
-        {
-          name: "url",
-          type: "input",
-          message: "Enter a url",
-          validate: (value) => {
-            return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(
-              value
-            );
-          },
-        },
-        {
-          name: "filename",
-          type: "input",
-          message:
-            "Enter a filename (all lowercase with dashes) ex: outlet-pdp",
-        },
-      ]);
+      const { url, filename } = await inquirer.prompt(inputPrompt);
 
-      return new Page("Entered URL", filename, url);
+      const page = new Page("Entered URL", filename, url);
+
+      if (!page.filename) {
+        page.createFilename();
+        return page;
+      }
+
+      return page;
     }
 
     return arr.find((page) => page.url === url);
@@ -80,7 +71,6 @@ async function runLighthouse(obj) {
   let pages = urls.map((url) => {
     const page = new Page("temp", "temp", url);
     page.createFilename();
-    console.log(page);
     return page;
   });
 

@@ -17,15 +17,15 @@ async function fetchSheet() {
   const sheet = doc.sheetsByIndex[0]; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
 
   await sheet.loadCells("A1:A10");
-  console.log(sheet.cellStats);
 
   let cells = [];
 
   for (let i = 1; i < 11; i++) {
     const currentCell = sheet.getCellByA1(`A${i}`).value;
 
-    if (!currentCell) break;
-    cells.push(currentCell);
+    if (currentCell) {
+      cells.push(currentCell);
+    }
   }
 
   return cells;
