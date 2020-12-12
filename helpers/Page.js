@@ -23,8 +23,8 @@ class Page {
 
   createFilename() {
     let file = this.url.slice(8);
-    file = file.slice(0, -1);
-    this.filename = convertURL(file, "/", "_");
+    file = file.endsWith("/") ? file.slice(0, -1) : file;
+    this.filename = this.convertURL(file, "/", "_");
   }
 }
 
