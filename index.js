@@ -33,7 +33,6 @@ async function askForURL(arr) {
 
       if (!page.filename) {
         page.createFilename();
-        return page;
       }
 
       return page;
