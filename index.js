@@ -45,10 +45,10 @@ async function askForURL(arr) {
 }
 
 async function runLighthouse(obj) {
-  const now = date.format(new Date(), "MM-DD-YYYY-HH-mm-ss");
+  obj.createTimestamp();
   const { url, filename } = obj;
-  currentFile = `${filename}-${now}.report`;
-  const path = `--output-path ${filename}-${now}.json`;
+  currentFile = `${filename}.report`;
+  const path = `--output-path ${filename}.json`;
   const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless" `;
   console.log("working...");
   // run lh cmd
@@ -60,7 +60,12 @@ async function runLighthouse(obj) {
   const table = Object.entries(metrics).map(([key, value]) => {
     return [key, value.displayValue];
   });
+  // print table
   console.table(table);
+  // attach stats to page object
+  obj.saveStats(Object.fromEntries(table));
+  console.log(obj);
+  // TODO: print to sheets.
   await open(`${currentFile}.html`);
 }
 
