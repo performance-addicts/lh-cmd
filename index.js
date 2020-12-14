@@ -7,7 +7,7 @@ require("dotenv").config();
 const { gatherMetrics, runCMD, convertURL } = require("./helpers/functions");
 const { inputPrompt } = require("./helpers/prompts");
 const Page = require("./helpers/Page");
-const { fetchSheet } = require("./sheets");
+const { fetchSheet, writeData } = require("./sheets");
 const pageList = require("./helpers/page-list");
 
 const read = promisify(fs.readFile);
@@ -75,6 +75,11 @@ async function runLighthouse(page) {
   // attach stats to page object
   page.saveStats(Object.fromEntries(table));
   console.log(page);
+
+  const objForSheets = { url: page.url, date: page.date, ...page.stats };
+
+  await writeData(objForSheets);
+
   // TODO: print to sheets.
   await open(`${currentFile}.html`);
 }
