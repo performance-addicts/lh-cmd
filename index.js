@@ -11,9 +11,13 @@ const { fetchSheet } = require("./sheets");
 const pageList = require("./helpers/page-list");
 
 const read = promisify(fs.readFile);
-const urlList = [...pageList.map(({ url }) => url), "Or enter URL"];
+// const urlList = [...pageList.map(({ url }) => url), "Or enter URL"];
 
 let currentFile = "";
+
+/**
+ * @param {array} url list
+ */
 
 async function askForURL(arr) {
   try {
@@ -44,9 +48,15 @@ async function askForURL(arr) {
   }
 }
 
-async function runLighthouse(obj) {
-  obj.createTimestamp();
-  const { url, filename } = obj;
+/**
+ * @param {object} page object
+ * @param {string} page.url - url for the page
+ * @param {string} page.filename - filename for lh report
+ */
+
+async function runLighthouse(page) {
+  page.createTimestamp();
+  const { url, filename } = page;
   currentFile = `${filename}.report`;
   const path = `--output-path ${filename}.json`;
   const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless --disable-dev-shm-usage" `;
@@ -63,7 +73,7 @@ async function runLighthouse(obj) {
   // print table
   console.table(table);
   // attach stats to page object
-  obj.saveStats(Object.fromEntries(table));
+  page.saveStats(Object.fromEntries(table));
   console.log(obj);
   // TODO: print to sheets.
   await open(`${currentFile}.html`);
