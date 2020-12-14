@@ -49,7 +49,7 @@ async function runLighthouse(obj) {
   const { url, filename } = obj;
   currentFile = `${filename}.report`;
   const path = `--output-path ${filename}.json`;
-  const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless" `;
+  const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless --disable-dev-shm-usage" `;
   console.log("working...");
   // run lh cmd
   await runCMD(command);

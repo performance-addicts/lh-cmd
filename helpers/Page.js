@@ -27,6 +27,7 @@ class Page {
     let file = this.url.slice(8);
     file = file.endsWith("/") ? file.slice(0, -1) : file;
     this.filename = this.convertURL(file, "/", "_");
+    this.filename = this.filename.replace(/[<>:"/\|?*]/g, "");
   }
 
   createTimestamp() {
