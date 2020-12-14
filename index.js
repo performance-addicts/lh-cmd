@@ -74,7 +74,7 @@ async function runLighthouse(page) {
   console.table(table);
   // attach stats to page object
   page.saveStats(Object.fromEntries(table));
-  console.log(obj);
+  console.log(page);
   // TODO: print to sheets.
   await open(`${currentFile}.html`);
 }
