@@ -9,7 +9,6 @@ async function gatherMetrics(path) {
   data = JSON.parse(data);
 
   const { audits, categories } = data;
-  console.log(categories);
 
   const allowed = [
     "first-meaningful-paint",
