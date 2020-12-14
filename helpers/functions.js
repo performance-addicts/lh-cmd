@@ -8,7 +8,8 @@ async function gatherMetrics(path) {
 
   data = JSON.parse(data);
 
-  const { audits } = data;
+  const { audits, categories } = data;
+  console.log(categories);
 
   const allowed = [
     "first-meaningful-paint",
@@ -25,11 +26,18 @@ async function gatherMetrics(path) {
     .reduce((obj, key) => {
       return {
         ...obj,
+
         [key]: audits[key],
       };
     }, {});
 
-  return filtered;
+  const metrics = {
+    ...filtered,
+    score: {
+      displayValue: categories.performance.score * 100,
+    },
+  };
+  return metrics;
 }
 
 function convertURL(url, swapOne, swapTwo) {
