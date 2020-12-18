@@ -23,7 +23,6 @@
     "dotenv": "^8.2.0",
     "google-spreadsheet": "^3.0.14",
     "inquirer": "^7.3.3",
-    "node-cmd": "^4.0.0",
-    "open": "^7.3.0"
+    "node-cmd": "^4.0.0"
   }
 }

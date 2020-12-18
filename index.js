@@ -1,8 +1,6 @@
 const fs = require("fs");
 const { promisify } = require("util");
 const inquirer = require("inquirer");
-const date = require("date-and-time");
-const open = require("open");
 require("dotenv").config();
 const { gatherMetrics, runCMD, convertURL } = require("./helpers/functions");
 const { inputPrompt } = require("./helpers/prompts");
@@ -59,8 +57,9 @@ async function runLighthouse(page) {
   const { url, filename } = page;
   currentFile = `${filename}.report`;
   const path = `--output-path ${filename}.json`;
-  const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless --disable-dev-shm-usage" `;
+  const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless --disable-dev-shm-usage" --view`;
   console.log("working...");
+
   // run lh cmd
   await runCMD(command);
   console.log("done");
@@ -76,7 +75,6 @@ async function runLighthouse(page) {
   page.saveStats(Object.fromEntries(table));
   console.log(page);
   // TODO: print to sheets.
-  await open(`${currentFile}.html`);
 }
 
 (async () => {
