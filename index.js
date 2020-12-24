@@ -2,8 +2,9 @@ const fs = require("fs");
 const { promisify } = require("util");
 const inquirer = require("inquirer");
 require("dotenv").config();
+const open = require("open");
 const { gatherMetrics, runCMD, convertURL } = require("./helpers/functions");
-const { inputPrompt } = require("./helpers/prompts");
+const { inputPrompt, clsPrompt } = require("./helpers/prompts");
 const Page = require("./helpers/Page");
 const { fetchSheet } = require("./sheets");
 const pageList = require("./helpers/page-list");
@@ -39,11 +40,19 @@ async function askForURL(arr) {
 
       return page;
     }
-
     return arr.find((page) => page.url === url);
   } catch (err) {
     console.log(err);
   }
+}
+
+async function askForCLS(page) {
+  const { cls } = await inquirer.prompt(clsPrompt);
+  if (cls) {
+    page.cls = true;
+  }
+
+  return;
 }
 
 /**
@@ -77,6 +86,14 @@ async function runLighthouse(page) {
   // TODO: print to sheets.
 }
 
+async function runCLS(page) {
+  const { url, filename } = page;
+  const command = `layout-shift-gif --url ${url} --device mobile --output ${filename}.gif`;
+  await runCMD(command);
+  console.log("CLS finished");
+  await open(`${filename}.gif`, { app: ["google chrome", "--incognito"] });
+}
+
 (async () => {
   const urls = await fetchSheet();
 
@@ -87,5 +104,7 @@ async function runLighthouse(page) {
   });
 
   const input = await askForURL(pages);
+  await askForCLS(input);
   await runLighthouse(input);
+  if (input.cls) await runCLS(input);
 })();

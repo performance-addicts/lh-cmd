@@ -6,16 +6,17 @@ class Page {
     this.filename = filename;
     this.url = url;
     this.date = "";
+    this.cls = false;
     this.stats = {};
   }
 
-  convertURL(url, swapOne, swapTwo) {
+  convertURL(url, existingChar, newChar) {
     url = url.split("");
 
     return url
       .map((char) => {
-        if (char === swapOne) {
-          char = swapTwo;
+        if (char === existingChar) {
+          char = newChar;
         }
 
         return char;

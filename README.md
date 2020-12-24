@@ -2,9 +2,14 @@
 
 ## Clone repo and npm install
 
-### Have Lighthouse installed
+### Have Lighthouse & layout-shift-gif installed
 
-It is not a listed dependency in this project - install globally first `npm install -g lighthouse`
+They are not listed dependencies in this project
+
+install globally first
+
+`npm install -g lighthouse`
+`npm install -g layout-shift-gif`
 
 ### Steps
 
