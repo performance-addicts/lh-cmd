@@ -16,4 +16,12 @@ const inputPrompt = [
   },
 ];
 
-module.exports = { inputPrompt };
+const clsPrompt = [
+  {
+    name: "cls",
+    type: "confirm",
+    message: "Would you like to run CLS test?",
+  },
+];
+
+module.exports = { inputPrompt, clsPrompt };
