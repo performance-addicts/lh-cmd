@@ -11,6 +11,24 @@ install globally first
 `npm install -g lighthouse`
 `npm install -g layout-shift-gif`
 
+---
+
+## Create .env file
+
+`GOOGLE_EMAIL=""` - Email associated with Sheets API
+
+`GOOGLE_PRIVATE_KEY=""` - Private key associated with Sheets API
+
+`SHEET_ID=""` - Sheet ID found in Sheet URL
+
+---
+
+## Create worksheet named `url-list`
+
+Put 10 top urls in Column A starting at the first row
+
+---
+
 ## Steps
 
 ### npm start
