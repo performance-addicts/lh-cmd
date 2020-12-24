@@ -2,7 +2,7 @@
 
 ## Clone repo and npm install
 
-### Have Lighthouse & layout-shift-gif installed
+## Have Lighthouse & layout-shift-gif installed
 
 They are not listed dependencies in this project
 
@@ -11,11 +11,11 @@ install globally first
 `npm install -g lighthouse`
 `npm install -g layout-shift-gif`
 
-### Steps
+## Steps
 
-1. npm start
+### npm start
 
-2. Select url from list or enter your own url
+### Select url from list or enter your own url
 
 ![URL Select](./images/url-select.png "URL Select")
 
@@ -33,4 +33,13 @@ The Lighthouse report will automatically open in your default browser.
 [filename]-MM-DD-YYYY-HH-mm-ss.report.html
 ```
 
-![Files](./images/files.png "Files")
+---
+
+### Choose whether to run layout-shift-gif
+
+If yes, CLS gif generator will run and save 2 files.
+
+```
+temp-screenshot.png
+[filename].gif
+```
