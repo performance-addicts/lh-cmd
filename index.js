@@ -1,11 +1,11 @@
 const fs = require("fs");
 const { promisify } = require("util");
 const inquirer = require("inquirer");
-require("dotenv").config();
 const open = require("open");
-const { gatherMetrics, runCMD, convertURL } = require("./helpers/functions");
-const { inputPrompt, clsPrompt } = require("./helpers/prompts");
+require("dotenv").config();
 const Page = require("./helpers/Page");
+const { gatherMetrics, runCMD } = require("./helpers/functions");
+const { inputPrompt, clsPrompt } = require("./helpers/prompts");
 const { fetchSheet } = require("./sheets");
 const pageList = require("./helpers/page-list");
 
@@ -67,11 +67,26 @@ async function runLighthouse(page) {
   currentFile = `${filename}.report`;
   const path = `--output-path ${filename}.json`;
   const command = `lighthouse ${url} --output json --output html ${path} --only-categories=performance --chrome-flags="--headless --disable-dev-shm-usage" --view`;
-  console.log("working...");
+  console.log(`
+  
+  ==============================
+  LIGHTHOUSE STARTED
+  ==============================
+
+  `);
+
+  // TODO: add why perf matters here
 
   // run lh cmd
   await runCMD(command);
-  console.log("done");
+
+  console.log(`
+  
+  ==============================
+  LIGHTHOUSE FINISHED
+  ==============================
+  
+  `);
 
   const metrics = await gatherMetrics(`${currentFile}.json`);
 
@@ -89,9 +104,25 @@ async function runLighthouse(page) {
 async function runCLS(page) {
   const { url, filename } = page;
   const command = `layout-shift-gif --url ${url} --device mobile --output ${filename}.gif`;
+  console.log(`
+  
+  ==============================
+  CLS STARTED
+  ==============================
+
+  `);
+
+  // TODO: add layout shift info here
+
   await runCMD(command);
-  console.log("CLS finished");
-  await open(`${filename}.gif`, { app: ["google chrome", "--incognito"] });
+
+  console.log(`
+  
+  ==============================
+  CLS FINISHED
+  ==============================
+
+  `);
 }
 
 (async () => {
@@ -106,5 +137,8 @@ async function runCLS(page) {
   const input = await askForURL(pages);
   await askForCLS(input);
   await runLighthouse(input);
-  if (input.cls) await runCLS(input);
+  if (input.cls) {
+    await runCLS(input);
+    await open(`${input.filename}.gif`);
+  }
 })();
