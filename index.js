@@ -4,18 +4,9 @@ const inquirer = require("inquirer");
 const open = require("open");
 require("dotenv").config();
 const Page = require("./helpers/Page");
-const {
-  gatherMetrics,
-  runCMD,
-  runLighthouse,
-  runCLS,
-} = require("./helpers/functions");
+const { runLighthouse, runCLS } = require("./helpers/functions");
 const { inputPrompt, clsPrompt } = require("./helpers/prompts");
 const { fetchSheet } = require("./sheets");
-const pageList = require("./helpers/page-list");
-
-const read = promisify(fs.readFile);
-// const urlList = [...pageList.map(({ url }) => url), "Or enter URL"];
 
 let currentFile = "";
 
@@ -61,9 +52,9 @@ async function askForCLS(page) {
 }
 
 (async () => {
-  const urls = await fetchSheet();
+  const urls = await fetchSheet(process.env.SHEET_NAME);
 
-  let pages = urls.map((url) => {
+  const pages = urls.map((url) => {
     const page = new Page("temp", "temp", url);
     page.createFilename();
     return page;
@@ -72,8 +63,10 @@ async function askForCLS(page) {
   const input = await askForURL(pages);
   await askForCLS(input);
   await runLighthouse(input);
+  console.log("\nLighthouse report opened in default browser\n");
   if (input.cls) {
     await runCLS(input);
     await open(`${input.filename}.gif`);
+    console.log("\nCLS gif opened in default photo viewer\n");
   }
 })();

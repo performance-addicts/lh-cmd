@@ -1,33 +1,26 @@
 # lh-cmd
 
-#### Run Lighthouse (perf only) and Layout Shift tests on your favorite urls listed in Google Sheets and save them locally via CLI.
+## Run Lighthouse (perf only) and Layout Shift tests on your favorite urls listed in Google Sheets and save them locally via CLI.
 
 <br/>
-<br/>
 
-## Clone repo and npm install
+### Installation
 
 ---
 
 <br/>
 
-### Have Lighthouse & layout-shift-gif installed
-
----
-
-<br/>
-
-They are not listed dependencies in this project
-
-install globally first
+Install Lighthouse and layout-shift-gif globally
 
 `npm install -g lighthouse`
 
 `npm install -g layout-shift-gif`
 
+`npm install` this project's dependencies
+
 <br/>
 
-### Create .env file
+### Setup
 
 ---
 
@@ -39,27 +32,23 @@ install globally first
 
 `SHEET_ID=""` - Sheet ID found in Sheet URL
 
-<br/>
-
-### Create worksheet named `url-list`
-
----
+`SHEET_NAME=""` - Name of worksheet containing list of URLs (Put 10 top urls in Column A starting at the first row)
 
 <br/>
-Put 10 top urls in Column A starting at the first row
-<br/>
-<br/>
 
-## Steps
+### Usage
 
 ---
 
 <br/>
 
-### npm start, Select url from list or enter your own url
+`npm start` and select url from list or enter your own url.
 
 <br/>
-- If you enter your own url, enter a filename for your reports.
+
+Optional: If you enter your own url, enter a filename for your reports.
+
+<br/>
 
 When finished, key Lighthouse metrics will be printed on the command line.
 The Lighthouse report will automatically open in your default browser.
@@ -82,5 +71,5 @@ If yes, CLS gif generator will run and save 2 files.
 
 ```
 temp-screenshot.png
-[filename].gif
+[filename]-MM-DD-YYYY-HH-mm-ss.gif
 ```
